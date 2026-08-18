@@ -1,0 +1,71 @@
+name: Desktop Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      signed_release:
+        description: "是否按正式发布标准强制签名、公证与签名校验"
+        required: true
+        default: false
+        type: boolean
+  push:
+    tags:
+      - "v*"
+
+# 构建只需读取仓库；工作流不创建 Release、不推送提交、不写入仓库。
+permissions:
+  contents: read
+
+env:
+  # 任何 v* 标签都被视为正式发布候选：缺少签名或公证配置时必须失败。
+  REQUIRE_SIGNING: ${{ github.event_name == 'push' && 'true' || inputs.signed_release && 'true' || 'false' }}
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - name: Package Windows
+        if: matrix.os == 'windows-latest'
+        run: npm run dist:win
+        env:
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+
+      - name: Verify Windows signatures for a signed release
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: ./scripts/verify-windows-signature.ps1
+
+      - name: Package macOS
+        if: matrix.os == 'macos-latest'
+        run: npm run dist:mac
+        env:
+          CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yiding-guanxiang-${{ matrix.os }}
+          path: release/**

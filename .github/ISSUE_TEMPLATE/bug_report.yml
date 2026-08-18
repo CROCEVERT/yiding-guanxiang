@@ -1,0 +1,50 @@
+name: Bug report
+description: Report a reproducible technical problem in 易定观象.
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        谢谢反馈。请只描述技术问题；不要填写你输入过的问题、观象记录、姓名、联系方式、财务、健康信息或任何他人隐私。
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: App version or commit/tag. For a browser preview, write “web preview”.
+      placeholder: e.g. 1.1.0
+    validations:
+      required: true
+  - type: dropdown
+    id: system
+    attributes:
+      label: Where did it happen?
+      options:
+        - macOS desktop app
+        - Windows desktop app
+        - Browser preview
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Use generic example text and do not paste private question content.
+      placeholder: |
+        1. Opened …
+        2. Clicked …
+        3. Saw …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual result
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Optional screenshot or additional details
+      description: Please crop or redact any private content before uploading.

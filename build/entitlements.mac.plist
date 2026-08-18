@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <!-- Electron 渲染进程运行所需；不授予网络、文件或用户隐私数据权限。 -->
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <!-- Electron Framework 由其自身团队签名，需保留库验证豁免。 -->
+    <key>com.apple.security.cs.disable-library-validation</key>
+    <true/>
+  </dict>
+</plist>

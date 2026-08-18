@@ -1,0 +1,96 @@
+{
+  "name": "xuangui-insight",
+  "private": true,
+  "version": "1.0.0",
+  "description": "《易经》传统文化学习与问题参照工具",
+  "author": "易定观象项目维护者",
+  "type": "module",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/verify-public-source.mjs && node scripts/verify-security-boundary.mjs && node scripts/verify-release-config.mjs && tsc -b && vite build && node scripts/verify-public-bundle.mjs",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "verify:release": "powershell -ExecutionPolicy Bypass -File scripts/verify-release.ps1",
+    "verify:public-bundle": "node scripts/verify-public-bundle.mjs",
+    "verify:public-source": "node scripts/verify-public-source.mjs",
+    "verify:security": "node scripts/verify-security-boundary.mjs",
+    "verify:release-config": "node scripts/verify-release-config.mjs",
+    "desktop:dev": "npm run build && electron electron/main.cjs",
+    "dist:win": "npm run build && electron-builder --win nsis portable",
+    "dist:win:zip": "powershell -ExecutionPolicy Bypass -File scripts/package-win-zip.ps1",
+    "dist:mac": "npm run build && electron-builder --mac dmg zip",
+    "dist:desktop": "npm run build && electron-builder"
+  },
+  "build": {
+    "appId": "com.yiding.guanxiang",
+    "productName": "易定观象",
+    "copyright": "Copyright (c) 2026 易定观象项目维护者",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "package.json",
+      "README.md",
+      "LICENSE.md",
+      "NOTICE.md",
+      "PRIVACY.md",
+      "SAFETY_AND_CONTENT_BOUNDARY.md",
+      "SECURITY.md",
+      "RELEASE_CHECKLIST.md"
+    ],
+    "beforePack": "scripts/release-preflight.cjs",
+    "afterSign": "scripts/verify-mac-distribution.cjs",
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "mac": {
+      "icon": "src/assets/images/coin-front-ritual.png",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.education",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": true,
+      "strictVerify": true,
+      "notarize": true,
+      "artifactName": "易定观象-${version}-mac-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "dependencies": {
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@types/node": "^24.12.3",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.5.0",
+    "electron": "^43.2.0",
+    "electron-builder": "^26.15.3",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "postcss": "^8.5.15",
+    "tailwindcss": "^3.4.19",
+    "typescript": "~6.0.2",
+    "typescript-eslint": "^8.59.2",
+    "vite": "^8.0.12"
+  }
+}

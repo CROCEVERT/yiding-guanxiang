@@ -1,0 +1,43 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+release
+audit-*.png
+*.lnk
+*.local
+.env
+.env.*
+!.env.example
+
+# 签名证书、Apple 公证密钥与私钥只能保存在受控凭据库，绝不能进入源码仓。
+*.p12
+*.pfx
+*.cer
+*.key
+AuthKey_*.p8
+
+# 私有研究原件仅保存于知识库；即使误复制回来，也不能进入公开源码仓。
+private-research/
+src/data/reviewed-copies/
+src/data/reviewedCopies.ts
+docs/CONTENT_AND_TECHNICAL_AUDIT_2026-08-10.md
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
