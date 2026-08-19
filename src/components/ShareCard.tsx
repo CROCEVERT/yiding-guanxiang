@@ -1,49 +1,102 @@
 import React from "react";
+import type { LineRecord } from "../types";
 
 void React;
 
 type ShareCardProps = {
   baseHexagramName: string;
+  baseHexagramNumber?: number;
   changedHexagramName: string;
+  changedHexagramNumber?: number;
+  judgment?: string;
+  question: string;
+  reading?: string;
+  lines: LineRecord[];
 };
 
-export function ShareCard({ baseHexagramName, changedHexagramName }: ShareCardProps) {
+function getShareLineLabel(line: LineRecord) {
+  const polarity = line.total === 7 || line.total === 9 ? "九" : "六";
+  const positions = ["初", "二", "三", "四", "五", "上"];
+  return `${positions[line.round - 1] ?? `第${line.round}`}${polarity}`;
+}
+
+function ShareHexagramDiagram({ lines }: { lines: LineRecord[] }) {
+  const displayLines = lines.slice(0, 6).reverse();
+
   return (
-    <article className="relative mx-auto w-full max-w-[320px] overflow-hidden rounded-[12px] border border-bronze/45 bg-[#0b0805] p-5 text-parchment shadow-[0_28px_90px_rgba(0,0,0,0.72)]">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_8%,rgba(201,160,99,0.24),transparent_34%),linear-gradient(180deg,rgba(255,230,180,0.08),transparent_46%)]" />
-      <div className="pointer-events-none absolute inset-3 rounded-[6px] border border-bronze/18" />
-
-      <div className="relative z-10">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold tracking-[0.24em] text-bronze/80">易定观象</p>
-            <h2 className="mt-2 font-display text-3xl font-bold leading-tight text-parchment">一次《易经》文化参照</h2>
+    <div aria-label="本卦六爻图" className="share-hexagram-diagram">
+      {displayLines.map((line, index) => {
+        const isYang = line.total === 7 || line.total === 9;
+        const isMoving = line.isChanging;
+        return (
+          <div className={isMoving ? "share-hexagram-line is-moving" : "share-hexagram-line"} key={`${line.round}-${index}`}>
+            {isYang ? (
+              <span className="share-hexagram-solid" />
+            ) : (
+              <span className="share-hexagram-broken">
+                <i />
+                <i />
+              </span>
+            )}
           </div>
-          <div className="grid h-12 w-12 shrink-0 place-items-center rounded-[8px] border border-bronze/35 bg-bronze/10 font-display text-2xl font-bold text-bronze">
-            象
+        );
+      })}
+    </div>
+  );
+}
+
+export function ShareCard({
+  baseHexagramName,
+  baseHexagramNumber,
+  changedHexagramName,
+  changedHexagramNumber,
+  judgment,
+  question,
+  reading,
+  lines,
+}: ShareCardProps) {
+  const movingLineNames = lines
+    .filter((line) => line.isChanging)
+    .map(getShareLineLabel);
+  const hasChange = movingLineNames.length > 0 && changedHexagramName !== baseHexagramName;
+  const referencePath = hasChange
+    ? `${baseHexagramName} → ${movingLineNames.join("、")}动 → ${changedHexagramName}`
+    : `${baseHexagramName} · 六爻皆静`;
+
+  return (
+    <article className="share-card" aria-label="易定观象分享卡片">
+      <div className="share-card-frame">
+        <header className="share-card-hero">
+          <p className="share-card-brand">易定观象 · 传统文化互动体验</p>
+          <div className="share-card-title-row">
+            <h2>{baseHexagramName}</h2>
+            {baseHexagramNumber ? <span>第{baseHexagramNumber}卦</span> : null}
           </div>
-        </div>
+          {judgment ? <p className="share-card-judgment">卦辞：{judgment}</p> : null}
+          <ShareHexagramDiagram lines={lines} />
+        </header>
 
-        <div className="my-6 h-px bg-gradient-to-r from-transparent via-bronze/36 to-transparent" />
+        <section className="share-card-reading">
+          <p className="share-card-kicker">观象参照</p>
+          <p className="share-card-status">{hasChange ? "本次为变卦" : "本次为静卦"}</p>
+          <p className="share-card-path">{referencePath}</p>
+          {hasChange && changedHexagramNumber ? <p className="share-card-change-number">之卦 · 第{changedHexagramNumber}卦</p> : null}
+          {reading ? (
+            <div className="share-card-reading-note">
+              <p>一句话参照</p>
+              <p>{reading}</p>
+            </div>
+          ) : null}
+          <div className="share-card-question">
+            <p>本次问题</p>
+            <p>{question}</p>
+          </div>
+        </section>
 
-        <div className="space-y-3">
-          <section className="rounded-[8px] border border-bronze/24 bg-parchment/[0.04] p-4">
-            <p className="text-xs font-semibold text-parchment/52">当前参照</p>
-            <p className="mt-1 font-display text-2xl font-bold text-parchment">{baseHexagramName}</p>
-          </section>
-          <section className="rounded-[8px] border border-bronze/24 bg-parchment/[0.04] p-4">
-            <p className="text-xs font-semibold text-parchment/52">变化参照</p>
-            <p className="mt-1 font-display text-2xl font-bold text-parchment">{changedHexagramName}</p>
-          </section>
-        </div>
-
-        <p className="mt-6 text-sm font-semibold leading-7 text-parchment/78">
-          基于经典文本与传统象义整理，仅供文化学习与问题参照。
-        </p>
-
-        <div className="mt-6 border-t border-bronze/18 pt-4 text-center text-xs font-semibold tracking-[0.12em] text-bronze/82">
-          免费传统文化学习工具｜不展示个人问题
-        </div>
+        <footer className="share-card-footer">
+          <p>仅作传统文化学习与问题参照，慎断是非。</p>
+          <p>免费传统文化学习工具 · 不展示个人问题</p>
+        </footer>
       </div>
     </article>
   );

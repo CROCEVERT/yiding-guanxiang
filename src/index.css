@@ -2,6 +2,304 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 分享卡只保留一张“观象札记”，避免在预览弹窗里再堆叠说明卡。 */
+.share-card {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(184, 137, 74, 0.5);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 50% 4%, rgba(220, 172, 95, 0.19), transparent 31%),
+    linear-gradient(155deg, rgba(44, 31, 16, 0.96), rgba(9, 8, 6, 0.98) 54%, rgba(24, 16, 10, 0.98));
+  box-shadow: 0 28px 86px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 239, 205, 0.08);
+}
+
+.share-card::before {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0.36;
+  background-image: linear-gradient(rgba(184, 137, 74, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(184, 137, 74, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: linear-gradient(to bottom, black, transparent 58%);
+}
+
+.share-card-frame {
+  position: relative;
+  z-index: 1;
+  margin: 18px;
+  overflow: hidden;
+  border: 1px solid rgba(184, 137, 74, 0.28);
+  border-radius: 13px;
+}
+
+.share-card-hero {
+  padding: 28px 24px 26px;
+  text-align: center;
+}
+
+.share-card-brand {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  color: rgba(234, 223, 202, 0.68);
+}
+
+.share-card-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 9px;
+  margin-top: 16px;
+}
+
+.share-card-title-row h2 {
+  margin: 0;
+  color: #f1e6d2;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: clamp(35px, 10vw, 48px);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.12;
+}
+
+.share-card-title-row span {
+  color: rgba(201, 160, 99, 0.88);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.share-card-judgment {
+  max-width: 280px;
+  margin: 16px auto 0;
+  color: rgba(234, 223, 202, 0.84);
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.6;
+}
+
+.share-hexagram-diagram {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 236px);
+  margin: 25px auto 0;
+}
+
+.share-hexagram-line,
+.share-hexagram-solid,
+.share-hexagram-broken {
+  display: flex;
+  width: 100%;
+}
+
+.share-hexagram-solid,
+.share-hexagram-broken i {
+  height: 13px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, #b77d36, #e5b966 50%, #b77d36);
+  box-shadow: 0 1px 7px rgba(206, 151, 70, 0.15);
+}
+
+.share-hexagram-broken {
+  gap: 20px;
+}
+
+.share-hexagram-broken i {
+  flex: 1;
+}
+
+.share-hexagram-line.is-moving .share-hexagram-solid,
+.share-hexagram-line.is-moving .share-hexagram-broken i {
+  background: linear-gradient(90deg, #d7a54e, #ffe2a0 50%, #d7a54e);
+  box-shadow: 0 0 15px rgba(245, 190, 85, 0.5);
+}
+
+.share-card-reading {
+  padding: 22px 24px 23px;
+  border-top: 1px solid rgba(184, 137, 74, 0.22);
+  background: rgba(4, 4, 3, 0.31);
+}
+
+.share-card-reading-note,
+.share-card-question {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(184, 137, 74, 0.2);
+}
+
+.share-card-reading-note p,
+.share-card-question p {
+  margin: 0;
+}
+
+.share-card-reading-note p:first-child,
+.share-card-question p:first-child {
+  color: rgba(201, 160, 99, 0.74);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.share-card-reading-note p:last-child {
+  margin-top: 7px;
+  color: rgba(234, 223, 202, 0.83);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.7;
+}
+
+.share-card-question p:last-child {
+  margin-top: 8px;
+  color: #f0e2c9;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.share-card-kicker,
+.share-card-change-number {
+  margin: 0;
+  color: rgba(234, 223, 202, 0.66);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.share-card-status {
+  display: inline-block;
+  margin: 14px 0 0;
+  padding: 7px 12px;
+  border-radius: 9px;
+  background: rgba(184, 137, 74, 0.17);
+  color: #e5c286;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.share-card-path {
+  margin: 15px 0 0;
+  color: #f0e2c9;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.share-card-change-number {
+  margin-top: 7px;
+  color: rgba(201, 160, 99, 0.8);
+}
+
+.share-card-footer {
+  padding: 16px 24px 18px;
+  border-top: 1px solid rgba(184, 137, 74, 0.18);
+  text-align: center;
+}
+
+.share-card-footer p {
+  margin: 0;
+  color: rgba(234, 223, 202, 0.5);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.share-card-footer p + p {
+  margin-top: 5px;
+  color: rgba(201, 160, 99, 0.68);
+  letter-spacing: 0.06em;
+}
+
+.share-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 20px;
+  isolation: isolate;
+  background: #050504;
+}
+
+.share-preview-dialog {
+  width: min(100%, 430px);
+  margin: auto;
+  padding: 14px;
+  border: 1px solid rgba(184, 137, 74, 0.38);
+  border-radius: 18px;
+  background: #0b0805;
+  box-shadow: 0 30px 96px rgba(0, 0, 0, 0.88);
+}
+
+.share-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 1px 2px 13px;
+}
+
+.share-preview-header p {
+  margin: 0;
+  color: rgba(201, 160, 99, 0.9);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.share-preview-close {
+  border: 1px solid rgba(184, 137, 74, 0.5);
+  border-radius: 8px;
+  padding: 7px 13px;
+  color: #d8ae67;
+  font-size: 13px;
+  font-weight: 700;
+  background: transparent;
+}
+
+.share-preview-actions {
+  margin-top: 13px;
+}
+
+.share-preview-save {
+  width: 100%;
+  border: 0;
+  border-radius: 11px;
+  padding: 13px 16px;
+  color: #1a1108;
+  font-family: "Noto Serif SC", "Songti SC", serif;
+  font-size: 16px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #d9ad61, #aa7435);
+  box-shadow: inset 0 1px 0 rgba(255, 237, 194, 0.36);
+}
+
+.share-preview-save:disabled {
+  opacity: 0.66;
+}
+
+.share-preview-note,
+.share-preview-error {
+  margin: 12px 3px 1px;
+  color: rgba(234, 223, 202, 0.58);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.share-preview-error {
+  color: #e3a58f;
+}
+
 :root {
   color: #eadfca;
   background: #090806;

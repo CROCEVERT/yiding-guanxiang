@@ -10,14 +10,14 @@ on:
         type: boolean
   push:
     tags:
-      - "v*"
+      - "signed-v*"
 
 # 构建只需读取仓库；工作流不创建 Release、不推送提交、不写入仓库。
 permissions:
   contents: read
 
 env:
-  # 任何 v* 标签都被视为正式发布候选：缺少签名或公证配置时必须失败。
+  # 只有 signed-v* 标签被视为正式发布候选：缺少签名或公证配置时必须失败。
   REQUIRE_SIGNING: ${{ github.event_name == 'push' && 'true' || inputs.signed_release && 'true' || 'false' }}
 
 jobs:

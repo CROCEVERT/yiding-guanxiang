@@ -150,6 +150,133 @@ function getSafeHexagramResult(result: InsightResult, lines: LineRecord[]) {
   }
 }
 
+type ShareImagePayload = {
+  baseHexagramName: string;
+  baseHexagramNumber?: number;
+  changedHexagramName: string;
+  changedHexagramNumber?: number;
+  judgment?: string;
+  question: string;
+  reading?: string;
+  lines: LineRecord[];
+};
+
+const escapeSvgText = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+function wrapShareText(value: string, maxLength: number, maxLines = 4) {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  const lines: string[] = [];
+  let current = "";
+
+  for (const character of Array.from(normalized)) {
+    current += character;
+    if (current.length >= maxLength) {
+      lines.push(current);
+      current = "";
+      if (lines.length === maxLines) break;
+    }
+  }
+
+  if (current && lines.length < maxLines) lines.push(current);
+  if (lines.join("").length < normalized.length && lines.length) lines[lines.length - 1] = `${lines[lines.length - 1].slice(0, -1)}…`;
+  return lines.length ? lines : ["未填写问题"];
+}
+
+function getShareLineLabel(line: LineRecord) {
+  const polarity = line.total === 7 || line.total === 9 ? "九" : "六";
+  const positions = ["初", "二", "三", "四", "五", "上"];
+  return `${positions[line.round - 1] ?? `第${line.round}`}${polarity}`;
+}
+
+function buildShareCardSvg(payload: ShareImagePayload) {
+  const movingLines = payload.lines.filter((line) => line.isChanging).map(getShareLineLabel);
+  const hasChange = movingLines.length > 0 && payload.changedHexagramName !== payload.baseHexagramName;
+  const path = hasChange
+    ? `${payload.baseHexagramName} → ${movingLines.join("、")}动 → ${payload.changedHexagramName}`
+    : `${payload.baseHexagramName} · 六爻皆静`;
+  const questionLines = wrapShareText(payload.question, 19);
+  const readingLines = payload.reading ? wrapShareText(payload.reading, 21, 3) : [];
+  const displayLines = payload.lines.slice(0, 6).reverse();
+  const hexagramLines = displayLines
+    .map((line, index) => {
+      const y = 474 + index * 48;
+      const fill = line.isChanging ? "url(#movingGold)" : "url(#bronzeGold)";
+      const glow = line.isChanging ? ' filter="url(#glow)"' : "";
+      if (line.total === 7 || line.total === 9) {
+        return `<rect x="270" y="${y}" width="540" height="20" rx="2" fill="${fill}"${glow} />`;
+      }
+      return `<rect x="270" y="${y}" width="238" height="20" rx="2" fill="${fill}"${glow} /><rect x="572" y="${y}" width="238" height="20" rx="2" fill="${fill}"${glow} />`;
+    })
+    .join("");
+  const readingSvg = readingLines
+    .map((line, index) => `<text x="112" y="${1066 + index * 36}" class="reading">${escapeSvgText(line)}</text>`)
+    .join("");
+  const questionY = 1128 + readingLines.length * 36;
+  const questionSvg = questionLines
+    .map((line, index) => `<text x="112" y="${questionY + 78 + index * 40}" class="question">${escapeSvgText(line)}</text>`)
+    .join("");
+  const height = Math.max(1450, questionY + 130 + questionLines.length * 40);
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="${height}" viewBox="0 0 1080 ${height}">
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#392713"/><stop offset="0.52" stop-color="#0c0906"/><stop offset="1" stop-color="#1c1209"/></linearGradient>
+    <radialGradient id="halo" cx="50%" cy="3%" r="64%"><stop stop-color="#dbac5f" stop-opacity=".28"/><stop offset="1" stop-color="#0c0906" stop-opacity="0"/></radialGradient>
+    <linearGradient id="bronzeGold" x1="0" x2="1"><stop stop-color="#b77d36"/><stop offset=".5" stop-color="#e5b966"/><stop offset="1" stop-color="#b77d36"/></linearGradient>
+    <linearGradient id="movingGold" x1="0" x2="1"><stop stop-color="#d7a54e"/><stop offset=".5" stop-color="#ffe2a0"/><stop offset="1" stop-color="#d7a54e"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="10" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>.title{font-family:'Noto Serif SC','Songti SC',serif;fill:#f1e6d2;font-weight:800}.label{font-family:'Noto Serif SC','Songti SC',serif;fill:#c99e62;font-weight:700}.body{font-family:'Noto Serif SC','Songti SC',serif;fill:#eadfca;font-weight:600}.muted{font-family:'Noto Serif SC','Songti SC',serif;fill:#bfb3a0;font-weight:600}.reading{font-family:'Noto Serif SC','Songti SC',serif;fill:#eadfca;font-size:27px;font-weight:600}.question{font-family:'Noto Serif SC','Songti SC',serif;fill:#f1e6d2;font-size:31px;font-weight:700}</style>
+  </defs>
+  <rect width="1080" height="${height}" fill="#090806"/><rect width="1080" height="${height}" fill="url(#background)"/><rect width="1080" height="740" fill="url(#halo)"/>
+  <rect x="58" y="58" width="964" height="${height - 116}" rx="22" fill="none" stroke="#b8894a" stroke-opacity=".48" stroke-width="2"/>
+  <rect x="86" y="86" width="908" height="${height - 172}" rx="12" fill="none" stroke="#b8894a" stroke-opacity=".27" stroke-width="2"/>
+  <text x="540" y="145" text-anchor="middle" class="muted" font-size="22" letter-spacing="5">易定观象 · 传统文化互动体验</text>
+  <text x="540" y="245" text-anchor="middle" class="title" font-size="76" letter-spacing="7">${escapeSvgText(payload.baseHexagramName)}</text>
+  ${payload.baseHexagramNumber ? `<text x="540" y="285" text-anchor="middle" class="label" font-size="25">第${payload.baseHexagramNumber}卦</text>` : ""}
+  ${payload.judgment ? `<text x="540" y="350" text-anchor="middle" class="body" font-size="30">卦辞：${escapeSvgText(payload.judgment)}</text>` : ""}
+  ${hexagramLines}
+  <line x1="86" y1="790" x2="994" y2="790" stroke="#b8894a" stroke-opacity=".28" stroke-width="2"/>
+  <text x="112" y="856" class="muted" font-size="24" letter-spacing="4">观象参照</text>
+  <rect x="112" y="885" width="190" height="54" rx="12" fill="#503719"/><text x="207" y="921" text-anchor="middle" class="label" font-size="25">${hasChange ? "本次为变卦" : "本次为静卦"}</text>
+  <text x="112" y="993" class="body" font-size="35">${escapeSvgText(path)}</text>
+  ${hasChange && payload.changedHexagramNumber ? `<text x="112" y="1030" class="label" font-size="23">之卦 · 第${payload.changedHexagramNumber}卦</text>` : ""}
+  ${readingLines.length ? `<text x="112" y="${1040}" class="muted" font-size="22" letter-spacing="3">一句话参照</text>${readingSvg}` : ""}
+  <line x1="112" y1="${questionY + 25}" x2="968" y2="${questionY + 25}" stroke="#b8894a" stroke-opacity=".25" stroke-width="2"/>
+  <text x="112" y="${questionY + 64}" class="muted" font-size="22" letter-spacing="3">本次问题</text>
+  ${questionSvg}
+  <text x="540" y="${height - 74}" text-anchor="middle" class="muted" font-size="20">仅作传统文化学习与问题参照，慎断是非。</text>
+  <text x="540" y="${height - 40}" text-anchor="middle" class="label" font-size="19" letter-spacing="2">免费传统文化学习工具 · 本卡片含你主动选择分享的问题</text>
+</svg>`;
+}
+
+async function saveShareCardImage(payload: ShareImagePayload) {
+  const svg = buildShareCardSvg(payload);
+  const svgUrl = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+  const image = new Image();
+
+  try {
+    await new Promise<void>((resolve, reject) => {
+      image.onload = () => resolve();
+      image.onerror = () => reject(new Error("图片生成失败"));
+      image.src = svgUrl;
+    });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = image.width * 2;
+    canvas.height = image.height * 2;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("当前浏览器无法生成图片");
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const downloadUrl = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = downloadUrl;
+    link.download = `易定观象-${payload.baseHexagramName}-分享卡.png`;
+    link.click();
+  } finally {
+    URL.revokeObjectURL(svgUrl);
+  }
+}
+
 function CompactHexagramChart({ lines }: { lines: LineRecord[] }) {
   const slots = Array.from({ length: 6 }, (_, index) => lines[index]);
   const motionLabel = getHexagramMotionLabel(lines);
@@ -367,6 +494,7 @@ function MovingLineFocus({
 
 export function ResultPage({ question, result, lines, onNavigate, onSave, saved }: ResultPageProps) {
   const [shareOpen, setShareOpen] = useState(false);
+  const [shareSaveState, setShareSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [selectedMovingIndex, setSelectedMovingIndex] = useState(0);
 
   if (!result) {
@@ -390,6 +518,31 @@ export function ResultPage({ question, result, lines, onNavigate, onSave, saved 
   const changedClassicText = getClassicHexagramText(changedClassic?.number);
   const baseInterpretation = getHexagramInterpretation(hexagramResult.baseHexagramName);
   const changedInterpretation = getHexagramInterpretation(hexagramResult.changedHexagramName);
+  const firstMovingLine = lines.find((line) => line.isChanging);
+  const firstMovingReading = firstMovingLine
+    ? getLineInterpretation(hexagramResult.baseHexagramName, getTraditionalLineName(firstMovingLine.round - 1, firstMovingLine.total))?.modernReading
+    : undefined;
+  const shareReading = staticMode ? baseInterpretation?.modernReading : firstMovingReading ?? baseInterpretation?.modernReading;
+  const shareImagePayload: ShareImagePayload = {
+    baseHexagramName: hexagramResult.baseHexagramName,
+    baseHexagramNumber: hexagramClassic?.number,
+    changedHexagramName: hexagramResult.changedHexagramName,
+    changedHexagramNumber: changedClassic?.number,
+    judgment: classicText?.judgment,
+    question,
+    reading: shareReading,
+    lines,
+  };
+
+  const handleShareSave = async () => {
+    setShareSaveState("saving");
+    try {
+      await saveShareCardImage(shareImagePayload);
+      setShareSaveState("saved");
+    } catch {
+      setShareSaveState("error");
+    }
+  };
   return (
     <div className="result-page space-y-5">
       <section className="ritual-panel result-summary-card p-5">
@@ -589,22 +742,28 @@ export function ResultPage({ question, result, lines, onNavigate, onSave, saved 
       </section>
 
       {shareOpen ? (
-        <div className="fixed inset-0 z-[999] grid place-items-center overflow-y-auto bg-black/82 px-5 py-6">
-          <div className="w-full max-w-sm rounded-[14px] border border-bronze/32 bg-ink/96 p-4 shadow-[0_28px_90px_rgba(0,0,0,0.78)]">
-            <div className="mb-4 flex items-center justify-between">
-              <p className="text-sm font-semibold tracking-[0.18em] text-bronze">参照卡片预览</p>
+        <div aria-label="分享卡片预览" aria-modal="true" className="share-preview-overlay" role="dialog">
+          <div className="share-preview-dialog">
+            <div className="share-preview-header">
+              <p>分享卡片预览</p>
               <button
-                className="rounded-[8px] border border-bronze/40 px-4 py-2 text-sm font-semibold text-bronze active:translate-y-px"
+                className="share-preview-close"
                 onClick={() => setShareOpen(false)}
                 type="button"
               >
                 关闭
               </button>
             </div>
-            <ShareCard baseHexagramName={hexagramResult.baseHexagramName} changedHexagramName={hexagramResult.changedHexagramName} />
-            <p className="mt-4 text-xs font-medium leading-5 text-parchment/58">
-              此卡片仅在当前设备生成，不会自动上传、发送或包含你的原始问题；分享前请确认卦名与时间线索不会暴露私人处境。
+            <ShareCard {...shareImagePayload} />
+            <div className="share-preview-actions">
+              <button className="share-preview-save" disabled={shareSaveState === "saving"} onClick={handleShareSave} type="button">
+                {shareSaveState === "saving" ? "正在生成图片…" : shareSaveState === "saved" ? "已保存到本地" : "保存到本地"}
+              </button>
+            </div>
+            <p className="share-preview-note">
+              本卡片会包含你主动填写的“本次问题”，但不会自动上传或发送。分享前请确认其中没有不想公开的个人信息。
             </p>
+            {shareSaveState === "error" ? <p className="share-preview-error">图片生成失败，请重新点击“保存到本地”。</p> : null}
           </div>
         </div>
       ) : null}

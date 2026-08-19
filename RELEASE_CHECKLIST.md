@@ -9,7 +9,7 @@
 1. 在 GitHub 新建**空的公开仓库**，建议名称为 `yiding-guanxiang`；创建时不要自动添加 README、License 或 `.gitignore`，以免与本地历史冲突。添加为本地项目的远端后，先推送普通分支，不要推送 `v*` 标签。
 2. 仅提交源码和文档，绝不提交 `.p12`、`.pfx`、`.p8`、证书密码或 `.env` 文件。上传前运行 `npm run build` 与公开源码检查。
 3. 在 GitHub 仓库设置中开启私密漏洞报告；按 GitHub 当前可用项开启 Secret scanning／push protection，并确认 `SECURITY.md` 可见。
-4. 源码公开与桌面安装包发布分开进行：可以先公开源码；没有签名与公证前，不把未签名安装包称为正式版或上传到 Release。
+4. 源码公开与桌面安装包发布分开进行：可以先公开源码；若发布未签名安装包，只能作为 GitHub Pre-release 的“未签名体验版”，不得称为正式版、已认证版或安全无提示版，并必须附 SHA-256 与来源提醒。
 5. 以普通用户身份分别在一台 Windows 与一台 macOS 上完成完整观象、记录删除、离线使用和卸载测试。
 
 ## macOS 直接发布（DMG / ZIP）
@@ -31,15 +31,15 @@
 - `WIN_CSC_LINK`：`.pfx` 证书的 base64 内容或受控证书地址；
 - `WIN_CSC_KEY_PASSWORD`：该证书密码。
 
-正式构建会对所有 `.exe` 再执行 Authenticode 验证。未签名版本可供你本机验收，但不应作为公开正式版发布；SmartScreen 的信誉也可能需要时间积累。
+正式构建会对所有 `.exe` 再执行 Authenticode 验证。未签名版本可作为公开体验包，但只能标为“未签名体验版”；Windows 可能显示未知发布者或 SmartScreen 提示，使用者需自行核对本仓库来源与 SHA-256。
 
 ## 构建与发布次序
 
-1. 手动触发 `Desktop Release` workflow，保持 `signed_release = false`，只取回构建工件验收。
+1. 未签名体验包：手动触发 `Desktop Release` workflow，保持 `signed_release = false`，只取回构建工件验收；本机与干净设备测试后，人工创建 GitHub Pre-release，上传文件和 SHA-256，并使用明确的未签名说明。
 2. 配好所有所需 Secrets 后，手动触发 `signed_release = true`，检查两端签名/公证验证均通过。
 3. 下载工件，在干净设备上安装并复验；为每个成品计算 SHA-256，写明版本号、功能变更、数据本地保存边界和免责声明变更。
 4. 人工创建 GitHub Draft Release，上传已验收的文件及校验和；审阅无误后再点击发布。
-5. 只有以上步骤通过，才可推送对应的 `v*` 标签。标签工作流会把签名、公证设为硬性条件，缺少配置即失败。
+5. 只有签名、公证与对应验证全部通过，才可推送 `signed-v*` 标签；该标签工作流会把签名、公证设为硬性条件，缺少配置即失败。
 
 ## 凭据安全规则
 

@@ -1,8 +1,8 @@
 # 易定观象｜GitHub 公开源码准备
 
-更新日期：2026-08-18
+更新日期：2026-08-19
 
-本文件用于首次公开源码，不是桌面安装包的正式发布说明。当前项目可先公开源代码；macOS 公证和 Windows 签名完成前，桌面安装包仍只属于本地验收或测试范围。
+本文件用于公开源码与未签名体验包的发布说明，不把未签名体验包包装为“已认证正式版”。
 
 首次公开版本定为 **易定观象 1.0**，程序版本号为 `1.0.0`；对应 Git 标签使用 `v1.0.0`，不复用本地历史中的中文测试标签。
 
@@ -26,11 +26,19 @@
 
 1. 在 GitHub 创建一个空的公开仓库，名称使用 `yiding-guanxiang`；不要勾选自动创建 README、License 或 `.gitignore`。
 2. 将仓库链接提供给项目维护者，或由维护者在本机添加为 `origin`。在推送前再次运行构建、公开边界与安全边界检查。
-3. 首次只推送源码与文档，不推送 `v*` 标签，不创建 Release，不上传未签名安装包。
+3. 首次公开源码可只推送源码与文档；若另行发布体验包，必须遵循下方“未签名体验包”要求。
 4. 在仓库设置中启用私密漏洞报告，并按可用项开启 Secret scanning 和 push protection。检查 `SECURITY.md` 和 Issue 模板已展示。
 5. 在 GitHub 首页补充上方简介与 Topics；确认 README、LICENSE、NOTICE、PRIVACY、SECURITY、内容边界和发布清单均可读。
 
 ## 桌面安装包的下一阶段
+
+### 未签名体验包（当前可选路线）
+
+- 仅发布已在本机与干净设备完成基本流程验收的 `.dmg`／`.zip`／`.exe`；Release 标题与正文必须写明“未签名体验版”，不得称为已认证、正式签名或无安全提示；
+- 发布到 GitHub **Pre-release**，附每个文件的 SHA-256、构建日期、平台与架构，且注明应用无登录、无云同步、无 API、记录只保存在用户当前设备；
+- 必须说明：macOS 可能阻止首次打开，Windows 可能提示未知发布者或 SmartScreen；用户只应从本仓库下载，遇到异常提示应停止安装并核对文件哈希；
+- 不要求、也不引导用户关闭系统整体安全功能。未签名体验包只用于愿意自行承担安装判断的体验者；
+- 一旦取得签名条件，签名版使用独立的 `signed-v*` 标签与新的 Release，不覆盖、不倒签现有体验包。
 
 - **macOS：** 需加入 Apple Developer Program，使用 Developer ID Application 证书签名，并提交 Apple 公证。Developer ID 与公证让 Gatekeeper 能核验应用来源与完整性，不等于 App Store 审核。参见 [Apple Developer ID](https://developer.apple.com/support/developer-id/) 与 [Apple 公证说明](https://developer.apple.com/documentation/security/notarizing-macos-software-before-distribution)。
 - **Windows：** 若直接在 GitHub 下载 EXE，需要可信代码签名；也可日后评估 Microsoft Store 的 MSIX 路线。Microsoft 目前将 Store 的 MSIX 路线和 Azure Artifact Signing 列为 Windows 分发的主要选项。参见 [Microsoft 代码签名选项](https://learn.microsoft.com/windows/apps/package-and-deploy/code-signing-options)。

@@ -61,13 +61,19 @@ npm run dist:mac
 
 注意：macOS 应用建议在 macOS 或 GitHub Actions 的 `macos-latest` 环境中打包；Windows 本机通常不适合直接产出可用的 macOS 安装包。
 
-本地验收时，先打开 `release/mac-arm64/易定观象.app`，确认应用能启动并完成完整观象流程；再检查 `release/` 中生成的 `.dmg` 与 `.zip`。未经过 Apple Developer 签名和公证的本地预览版，macOS 可能显示来源提示；该提示不影响本机验收，但不应在用户确认前对外发布。
+本地验收时，先打开 `release/mac-arm64/易定观象.app`，确认应用能启动并完成完整观象流程；再检查 `release/` 中生成的 `.dmg` 与 `.zip`。
+
+### 未签名体验包
+
+项目可以发布明确标注为“未签名体验版”的免费安装包，但它不是“已认证正式版”：macOS 可能阻止首次打开，Windows 可能显示“未知发布者”或 SmartScreen 提示。请只从本仓库的 GitHub Release 下载，并核对 Release 中公布的 SHA-256；不要因系统提示而关闭系统安全设置、输入密码给第三方，或从搬运站下载同名文件。
+
+未签名体验包仍须通过完整观象、记录保存、离线使用、卸载与下载后校验；Release 说明必须明确“未签名”“本地保存”“不含线上服务”“不构成现实判断”。获得对应平台的签名与公证后，才会另行发布签名版。
 
 ## GitHub 自动打包
 
-仓库包含 `.github/workflows/desktop-release.yml`。手动触发 workflow 可生成验收构建；推送 `v*` 标签会按正式发布标准强制 macOS 签名/公证与 Windows 签名验证。该 workflow 只上传构建工件，**不会自动创建 GitHub Release 或公开发布**。
+仓库包含 `.github/workflows/desktop-release.yml`。手动触发 workflow 可生成验收构建；只有推送 `signed-v*` 标签才会按正式发布标准强制 macOS 签名/公证与 Windows 签名验证。该 workflow 只上传构建工件，**不会自动创建 GitHub Release 或公开发布**。
 
-在配置 GitHub 仓库、Apple Developer 身份与 Windows 代码签名证书之前，请勿推送 `v*` 标签。详细准备方式见 [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)。
+未签名体验版也必须经过本地和干净设备验收；在配置 Apple Developer 身份与 Windows 代码签名证书之前，请勿推送 `signed-v*` 标签。详细准备方式见 [RELEASE_CHECKLIST.md](./RELEASE_CHECKLIST.md)。
 
 仓库名称、简介、GitHub 设置和首次上传步骤见 [PUBLISHING.md](./PUBLISHING.md)。
 
