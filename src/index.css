@@ -29,65 +29,56 @@
 .share-card-frame {
   position: relative;
   z-index: 1;
-  margin: 18px;
+  margin: 10px;
   overflow: hidden;
   border: 1px solid rgba(184, 137, 74, 0.28);
   border-radius: 13px;
 }
 
 .share-card-hero {
-  padding: 28px 24px 26px;
+  padding: 17px 18px 14px;
   text-align: center;
 }
 
 .share-card-brand {
   margin: 0;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.19em;
   color: rgba(234, 223, 202, 0.68);
 }
 
 .share-card-title-row {
-  display: flex;
-  align-items: baseline;
+  display: block;
   justify-content: center;
-  gap: 9px;
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
 .share-card-title-row h2 {
   margin: 0;
   color: #f1e6d2;
   font-family: "Noto Serif SC", "Songti SC", serif;
-  font-size: clamp(35px, 10vw, 48px);
+  font-size: clamp(31px, 9vw, 44px);
   font-weight: 800;
   letter-spacing: 0.06em;
   line-height: 1.12;
+  white-space: nowrap;
 }
 
 .share-card-title-row span {
+  display: block;
+  margin-top: 5px;
   color: rgba(201, 160, 99, 0.88);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
 }
 
-.share-card-judgment {
-  max-width: 280px;
-  margin: 16px auto 0;
-  color: rgba(234, 223, 202, 0.84);
-  font-family: "Noto Serif SC", "Songti SC", serif;
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 1.6;
-}
-
 .share-hexagram-diagram {
   display: grid;
-  gap: 12px;
-  width: min(100%, 236px);
-  margin: 25px auto 0;
+  gap: 6px;
+  width: min(100%, 204px);
+  margin: 13px auto 0;
 }
 
 .share-hexagram-line,
@@ -99,14 +90,14 @@
 
 .share-hexagram-solid,
 .share-hexagram-broken i {
-  height: 13px;
+  height: 8px;
   border-radius: 1px;
   background: linear-gradient(90deg, #b77d36, #e5b966 50%, #b77d36);
   box-shadow: 0 1px 7px rgba(206, 151, 70, 0.15);
 }
 
 .share-hexagram-broken {
-  gap: 20px;
+  gap: 14px;
 }
 
 .share-hexagram-broken i {
@@ -120,15 +111,15 @@
 }
 
 .share-card-reading {
-  padding: 22px 24px 23px;
+  padding: 13px 18px 14px;
   border-top: 1px solid rgba(184, 137, 74, 0.22);
   background: rgba(4, 4, 3, 0.31);
 }
 
 .share-card-reading-note,
-.share-card-question {
-  margin-top: 18px;
-  padding-top: 16px;
+.share-card-reference {
+  margin-top: 11px;
+  padding-top: 10px;
   border-top: 1px solid rgba(184, 137, 74, 0.2);
 }
 
@@ -146,60 +137,55 @@
 }
 
 .share-card-reading-note p:last-child {
-  margin-top: 7px;
   color: rgba(234, 223, 202, 0.83);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1.7;
 }
 
 .share-card-question p:last-child {
-  margin-top: 8px;
+  margin-top: 5px;
   color: #f0e2c9;
   font-family: "Noto Serif SC", "Songti SC", serif;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
   line-height: 1.65;
   overflow-wrap: anywhere;
 }
 
-.share-card-kicker,
-.share-card-change-number {
-  margin: 0;
-  color: rgba(234, 223, 202, 0.66);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-}
-
 .share-card-status {
   display: inline-block;
-  margin: 14px 0 0;
-  padding: 7px 12px;
+  margin: 0;
+  padding: 4px 8px;
   border-radius: 9px;
   background: rgba(184, 137, 74, 0.17);
   color: #e5c286;
   font-family: "Noto Serif SC", "Songti SC", serif;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .share-card-path {
-  margin: 15px 0 0;
+  margin: 7px 0 0;
   color: #f0e2c9;
   font-family: "Noto Serif SC", "Songti SC", serif;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: 700;
   line-height: 1.55;
 }
 
-.share-card-change-number {
-  margin-top: 7px;
-  color: rgba(201, 160, 99, 0.8);
+.share-card-reading-note {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.share-card-reading-note span {
+  color: rgba(201, 160, 99, 0.78);
+  font-weight: 700;
 }
 
 .share-card-footer {
-  padding: 16px 24px 18px;
+  padding: 9px 18px 10px;
   border-top: 1px solid rgba(184, 137, 74, 0.18);
   text-align: center;
 }
@@ -212,27 +198,22 @@
   line-height: 1.65;
 }
 
-.share-card-footer p + p {
-  margin-top: 5px;
-  color: rgba(201, 160, 99, 0.68);
-  letter-spacing: 0.06em;
-}
-
 .share-preview-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  display: grid;
-  place-items: center;
+  display: block;
   overflow-y: auto;
-  padding: 20px;
-  isolation: isolate;
-  background: #050504;
+  padding: max(20px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+  overscroll-behavior: contain;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(184, 137, 74, 0.13), transparent 22rem),
+    rgba(5, 5, 4, 0.98);
 }
 
 .share-preview-dialog {
   width: min(100%, 430px);
-  margin: auto;
+  margin: 0 auto;
   padding: 14px;
   border: 1px solid rgba(184, 137, 74, 0.38);
   border-radius: 18px;

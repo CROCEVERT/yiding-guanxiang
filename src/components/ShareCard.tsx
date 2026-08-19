@@ -49,8 +49,6 @@ export function ShareCard({
   baseHexagramName,
   baseHexagramNumber,
   changedHexagramName,
-  changedHexagramNumber,
-  judgment,
   question,
   reading,
   lines,
@@ -72,30 +70,27 @@ export function ShareCard({
             <h2>{baseHexagramName}</h2>
             {baseHexagramNumber ? <span>第{baseHexagramNumber}卦</span> : null}
           </div>
-          {judgment ? <p className="share-card-judgment">卦辞：{judgment}</p> : null}
           <ShareHexagramDiagram lines={lines} />
         </header>
 
         <section className="share-card-reading">
-          <p className="share-card-kicker">观象参照</p>
-          <p className="share-card-status">{hasChange ? "本次为变卦" : "本次为静卦"}</p>
-          <p className="share-card-path">{referencePath}</p>
-          {hasChange && changedHexagramNumber ? <p className="share-card-change-number">之卦 · 第{changedHexagramNumber}卦</p> : null}
-          {reading ? (
-            <div className="share-card-reading-note">
-              <p>一句话参照</p>
-              <p>{reading}</p>
-            </div>
-          ) : null}
           <div className="share-card-question">
             <p>本次问题</p>
             <p>{question}</p>
           </div>
+          <div className="share-card-reference">
+            <p className="share-card-status">{hasChange ? "本次为变卦" : "本次为静卦"}</p>
+            <p className="share-card-path">{referencePath}</p>
+          </div>
+          {reading ? (
+            <div className="share-card-reading-note">
+              <p><span>一句话参照：</span>{reading}</p>
+            </div>
+          ) : null}
         </section>
 
         <footer className="share-card-footer">
           <p>仅作传统文化学习与问题参照，慎断是非。</p>
-          <p>免费传统文化学习工具 · 不展示个人问题</p>
         </footer>
       </div>
     </article>
