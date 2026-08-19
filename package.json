@@ -17,10 +17,10 @@
     "verify:security": "node scripts/verify-security-boundary.mjs",
     "verify:release-config": "node scripts/verify-release-config.mjs",
     "desktop:dev": "npm run build && electron electron/main.cjs",
-    "dist:win": "npm run build && electron-builder --config electron-builder.config.cjs --win nsis portable",
+    "dist:win": "npm run build && electron-builder --config electron-builder.config.cjs --publish never --win nsis portable",
     "dist:win:zip": "powershell -ExecutionPolicy Bypass -File scripts/package-win-zip.ps1",
-    "dist:mac": "npm run build && electron-builder --config electron-builder.config.cjs --mac dmg zip",
-    "dist:desktop": "npm run build && electron-builder --config electron-builder.config.cjs"
+    "dist:mac": "npm run build && electron-builder --config electron-builder.config.cjs --publish never --mac dmg zip",
+    "dist:desktop": "npm run build && electron-builder --config electron-builder.config.cjs --publish never"
   },
   "build": {
     "appId": "com.yiding.guanxiang",

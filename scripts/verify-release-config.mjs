@@ -2,11 +2,12 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
-const [packageText, workflow, gitignore] = await Promise.all([
+const [packageText, workflowText, gitignore] = await Promise.all([
   readFile(new URL("../package.json", import.meta.url), "utf8"),
   readFile(new URL("../.github/workflows/desktop-release.yml", import.meta.url), "utf8"),
   readFile(new URL("../.gitignore", import.meta.url), "utf8"),
 ]);
+const workflow = workflowText.replaceAll("\r\n", "\n");
 const packageJson = JSON.parse(packageText);
 const build = packageJson.build ?? {};
 const issues = [];
