@@ -77,7 +77,22 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
+      - name: Write Windows SHA-256 manifest
+        if: matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path release -File -Filter "*.exe" |
+            ForEach-Object { "{0}  {1}" -f (Get-FileHash -Algorithm SHA256 $_.FullName).Hash.ToLower(), $_.Name } |
+            Set-Content -Encoding utf8 release/SHA256SUMS-windows.txt
+
+      - name: Write macOS SHA-256 manifest
+        if: matrix.os == 'macos-latest'
+        run: shasum -a 256 release/*.dmg > release/SHA256SUMS-macos.txt
+
       - uses: actions/upload-artifact@v4
         with:
           name: yiding-guanxiang-${{ matrix.os }}
-          path: release/**
+          path: |
+            release/*.dmg
+            release/*.exe
+            release/SHA256SUMS-*.txt
