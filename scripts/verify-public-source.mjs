@@ -37,7 +37,7 @@ async function walk(directory) {
 
 const hits = [];
 for (const absolutePath of await walk(projectRoot)) {
-  const path = relative(projectRoot, absolutePath);
+  const path = relative(projectRoot, absolutePath).replaceAll("\\", "/");
   if (excludedFiles.has(path)) continue;
   const content = await readFile(absolutePath, "utf8").catch(() => "");
   if (privateMarkers.some((pattern) => pattern.test(content))) {

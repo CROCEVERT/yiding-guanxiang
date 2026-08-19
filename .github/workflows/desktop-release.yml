@@ -43,8 +43,14 @@ jobs:
 
       - run: npm run build
 
-      - name: Package Windows
-        if: matrix.os == 'windows-latest'
+      - name: Package Windows unsigned experience build
+        if: matrix.os == 'windows-latest' && env.REQUIRE_SIGNING != 'true'
+        run: npm run dist:win
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+      - name: Package Windows signed release
+        if: matrix.os == 'windows-latest' && env.REQUIRE_SIGNING == 'true'
         run: npm run dist:win
         env:
           WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
@@ -55,8 +61,14 @@ jobs:
         shell: pwsh
         run: ./scripts/verify-windows-signature.ps1
 
-      - name: Package macOS
-        if: matrix.os == 'macos-latest'
+      - name: Package macOS unsigned experience build
+        if: matrix.os == 'macos-latest' && env.REQUIRE_SIGNING != 'true'
+        run: npm run dist:mac
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+      - name: Package macOS signed release
+        if: matrix.os == 'macos-latest' && env.REQUIRE_SIGNING == 'true'
         run: npm run dist:mac
         env:
           CSC_LINK: ${{ secrets.MAC_CSC_LINK }}
