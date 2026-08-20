@@ -11,6 +11,9 @@ module.exports = {
   ...packageJson.build,
   mac: {
     ...packageJson.build.mac,
+    // 未签名体验包也要做 ad-hoc 完整签名，避免 macOS 将 Electron 的残留二进制签名
+    // 误判为“App 已损坏”。它没有 Team ID、不能通过 Gatekeeper 公证，不等同正式签名。
+    identity: isSignedRelease ? undefined : "-",
     hardenedRuntime: isSignedRelease,
     notarize: isSignedRelease,
   },
