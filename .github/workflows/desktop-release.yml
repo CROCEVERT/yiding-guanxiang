@@ -77,6 +77,10 @@ jobs:
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
 
+      - name: Verify macOS DMG application integrity
+        if: matrix.os == 'macos-latest'
+        run: npm run verify:mac-dmg
+
       - name: Write Windows SHA-256 manifest
         if: matrix.os == 'windows-latest'
         shell: pwsh

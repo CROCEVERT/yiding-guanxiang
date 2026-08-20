@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "verify:release": "powershell -ExecutionPolicy Bypass -File scripts/verify-release.ps1",
+    "verify:mac-dmg": "node scripts/verify-macos-dmg-integrity.cjs",
     "verify:public-bundle": "node scripts/verify-public-bundle.mjs",
     "verify:public-source": "node scripts/verify-public-source.mjs",
     "verify:security": "node scripts/verify-security-boundary.mjs",
